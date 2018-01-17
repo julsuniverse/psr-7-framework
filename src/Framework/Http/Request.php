@@ -1,7 +1,7 @@
 <?php
 namespace Framework\Http;
 
-class Request
+class Request implements ServerRequestInterface
 {
     private $queryParams;
     private $parsedBody;
