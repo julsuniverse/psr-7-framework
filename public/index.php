@@ -1,16 +1,25 @@
 <?php
 
-use Framework\Http\Request;
+use Framework\Http\RequestFactory;
+use Framework\Http\Response;
 
 chdir(dirname(__DIR__));
-require 'src/Framework/Http/Request.php';
+require 'vendor/autoload.php';
 
 ### Initialization
 
-$request = (new Request())->withQueryParams($_GET)->withParsedBody($_POST);
+$request = RequestFactory::fromGlobals();
 
 ### Action
 
 $name = $request->getQueryParams()['name'] ?? 'Guest';
-header('X-Developer: Julia');
-echo 'Hello, ' . $name . '!';
+$response = (new Response('Hello, ' . $name . '!'))
+    ->withHeader('X-Developer', 'ElisDN');
+
+### Sending
+
+header('HTTP/1.0 ' . $response->getStatusCode() . ' ' . $response->getReasonPhrase());
+foreach ($response->getHeaders() as $name => $value) {
+    header($name . ':' . $value);
+}
+echo $response->getBody();
