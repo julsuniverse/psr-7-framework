@@ -7,7 +7,7 @@ require 'src/Framework/Http/Request.php';
 
 ### Initialization
 
-$request = new Request();
+$request = (new Request())->withQueryParams($_GET)->withParsedBody($_POST);
 
 ### Action
 
