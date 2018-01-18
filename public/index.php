@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Action;
+use Framework\Http\ActionResolver;
+use Framework\Http\Router\AuraRouterAdapter;
+use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
@@ -9,13 +13,35 @@ require 'vendor/autoload.php';
 
 ### Initialization
 
+$aura = new Aura\Router\RouterContainer();
+$map = $aura->getMap();
+
+$map->get('home', '/', Action\HelloAction::class);
+$map->get('about', '/about', Action\AboutAction::class);
+$map->get('blog', '/blog', Action\Blog\IndexAction::class);
+$map->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
+
+
+$router = new AuraRouterAdapter($aura);
+$resolver = new ActionResolver();
+
+### Running
+
 $request = ServerRequestFactory::fromGlobals();
+try {
+    $result = $router->match($request);
+    foreach($result->getAttributes() as $attribute => $value) {
+        $request = $request->withAttribute($attribute, $value);
+    }
+    $action = $resolver->resolve($result->getHandler());
+    $response = $action($request);
+} catch (RequestNotMatchedException $e) {
+    $response = new HtmlResponse('Undefined page', 404);
+}
 
-### Action
+### Postprocessing
 
-$name = $request->getQueryParams()['name'] ?? 'Guest';
-$response = (new HtmlResponse('Hello, ' . $name . '!'))
-    ->withHeader('X-Developer', 'ElisDN');
+$response = $response->withHeader('X-Developer', 'Julia');
 
 ### Sending
 
