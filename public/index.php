@@ -22,19 +22,20 @@ $map->get('blog', '/blog', Action\Blog\IndexAction::class);
 $map->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
 
-$router = new AuraRouterAdapter($aura);
+$router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в свой адаптер
 $resolver = new ActionResolver();
 
 ### Running
 
-$request = ServerRequestFactory::fromGlobals();
+$request = ServerRequestFactory::fromGlobals(); //содержит все информацию о запросе
 try {
-    $result = $router->match($request);
-    foreach($result->getAttributes() as $attribute => $value) {
+    $result = $router->match($request); //проверяем соответвие запроса с нашими роутерами
+    foreach($result->getAttributes() as $attribute => $value) { //достаем из запроса атрибуты (в запросе кроме аттрибутов еще куча другой информации!)
         $request = $request->withAttribute($attribute, $value);
     }
-    $action = $resolver->resolve($result->getHandler());
-    $response = $action($request);
+
+    $action = $resolver->resolve($result->getHandler()); //получаем обработчик запроса (экшен)
+    $response = $action($request); //передаем в экшен запрос с аттрибутами, если они есть
 } catch (RequestNotMatchedException $e) {
     $response = new HtmlResponse('Undefined page', 404);
 }
@@ -44,6 +45,6 @@ try {
 $response = $response->withHeader('X-Developer', 'Julia');
 
 ### Sending
-
+//отправляем обратно в бразуер результат
 $emitter = new SapiEmitter();
 $emitter->emit($response);
