@@ -13,11 +13,16 @@ require 'vendor/autoload.php';
 
 ### Initialization
 
+$params = [
+    'users' => ['admin' => 'password'],
+];
+
 $aura = new Aura\Router\RouterContainer();
 $map = $aura->getMap();
 
 $map->get('home', '/', Action\HelloAction::class);
 $map->get('about', '/about', Action\AboutAction::class);
+$map->get('cabinet', '/cabinet', new Action\CabinetAction($params['users']));
 $map->get('blog', '/blog', Action\Blog\IndexAction::class);
 $map->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
