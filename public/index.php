@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Action;
+use App\Http\Action\CabinetAction;
+use App\Http\Middleware\BasicAuthMiddleware;
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
@@ -18,13 +21,27 @@ $params = [
 ];
 
 $aura = new Aura\Router\RouterContainer();
-$map = $aura->getMap();
+$routes = $aura->getMap();
 
-$map->get('home', '/', Action\HelloAction::class);
-$map->get('about', '/about', Action\AboutAction::class);
-$map->get('cabinet', '/cabinet', new Action\CabinetAction($params['users']));
-$map->get('blog', '/blog', Action\Blog\IndexAction::class);
-$map->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
+$routes->get('home', '/', Action\HelloAction::class);
+$routes->get('about', '/about', Action\AboutAction::class);
+
+/*
+ * Вместо action (handler) мы передаем анонимную функцию, которая по цепочке будет вызывать сначала middleware и в конце нужный нам экшен.
+ * Нужный экшен будет замыкать цепочку вызовов.
+ */
+
+$routes->get('cabinet', '/cabinet', function(ServerRequestInterface $request) use ($params){
+    $auth = new BasicAuthMiddleware($params['users']);
+    $cabinet = new CabinetAction();
+
+    return $auth($request, function(ServerRequestInterface $request) use ($cabinet) {
+       return $cabinet($request);
+    });
+});
+
+$routes->get('blog', '/blog', Action\Blog\IndexAction::class);
+$routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
 
 $router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в свой адаптер
