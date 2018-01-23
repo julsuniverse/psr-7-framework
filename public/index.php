@@ -5,7 +5,7 @@ use App\Http\Action\CabinetAction;
 use App\Http\Middleware;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
-use Framework\Http\ActionResolver;
+use Framework\Http\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
@@ -34,23 +34,18 @@ $routes->get('about', '/about', Action\AboutAction::class);
  * Нужный экшен будет замыкать цепочку вызовов.
  */
 
-$routes->get('cabinet', '/cabinet', function(ServerRequestInterface $request) use ($params){
-
-    $pipeline = new Pipeline();
-
-    $pipeline->pipe(new BasicAuthMiddleware($params['users']));
-    $pipeline->pipe(new ProfilerMiddleware());
-    $pipeline->pipe(new CabinetAction());
-
-    return $pipeline($request, new Middleware\NotFoundHandler());
-});
+$routes->get('cabinet', '/cabinet', [
+    ProfilerMiddleware::class,
+    new BasicAuthMiddleware($params['users']),
+    CabinetAction::class,
+]);
 
 $routes->get('blog', '/blog', Action\Blog\IndexAction::class);
 $routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
 
 
 $router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в свой адаптер
-$resolver = new ActionResolver();
+$resolver = new MiddlewareResolver();
 
 ### Running
 
@@ -61,10 +56,18 @@ try {
         $request = $request->withAttribute($attribute, $value);
     }
 
-    $action = $resolver->resolve($result->getHandler()); //получаем обработчик запроса (экшен)
-    $response = $action($request); //передаем в экшен запрос с аттрибутами, если они есть
+    $handlers = $result->getHandler(); //получаем обработчик из роутера (указываем при формировании роута)
+    $pipeline = new Pipeline(); //создаем объект Pipeline
+
+    foreach (is_array($handlers) ? $handlers : [$handlers] as $handler) { //проверяем является ли элемент массивом или строкой
+        $pipeline->pipe($resolver->resolve($handler)); //заносим все элементы массива из обработчика в трубопровод
+    }
+
+    $response = $pipeline($request, new Middleware\NotFoundHandler()); //запускает трубопровод со всеми middleware
+
 } catch (RequestNotMatchedException $e) {
-    $response = new HtmlResponse('Undefined page', 404);
+    $handler = new Middleware\NotFoundHandler();
+    $response = $handler($request);
 }
 
 ### Postprocessing

@@ -3,7 +3,7 @@
 namespace Framework\Http;
 
 
-class ActionResolver
+class MiddlewareResolver
 {
     public function resolve($handler): callable
     {
