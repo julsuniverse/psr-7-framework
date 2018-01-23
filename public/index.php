@@ -2,6 +2,7 @@
 
 use App\Http\Action;
 use App\Http\Action\CabinetAction;
+use App\Http\Middleware;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\ActionResolver;
@@ -41,9 +42,7 @@ $routes->get('cabinet', '/cabinet', function(ServerRequestInterface $request) us
     $pipeline->pipe(new ProfilerMiddleware());
     $pipeline->pipe(new CabinetAction());
 
-    return $pipeline($request, function() {
-        return new HtmlResponse('Undefined page', 404);
-    });
+    return $pipeline($request, new Middleware\NotFoundHandler());
 });
 
 $routes->get('blog', '/blog', Action\Blog\IndexAction::class);
