@@ -5,6 +5,7 @@ use App\Http\Action\CabinetAction;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\ActionResolver;
+use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -33,14 +34,15 @@ $routes->get('about', '/about', Action\AboutAction::class);
  */
 
 $routes->get('cabinet', '/cabinet', function(ServerRequestInterface $request) use ($params){
-    $auth = new BasicAuthMiddleware($params['users']);
-    $profiler = new ProfilerMiddleware();
-    $cabinet = new CabinetAction();
 
-    return $profiler($request, function(ServerRequestInterface $request) use ($auth, $cabinet) {
-        return $auth($request, function(ServerRequestInterface $request) use ($cabinet) {
-            return $cabinet($request);
-        });
+    $pipeline = new Pipeline();
+
+    $pipeline->pipe(new BasicAuthMiddleware($params['users']));
+    $pipeline->pipe(new ProfilerMiddleware());
+    $pipeline->pipe(new CabinetAction());
+
+    return $pipeline($request, function() {
+        return new HtmlResponse('Undefined page', 404);
     });
 });
 
