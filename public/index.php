@@ -3,6 +3,7 @@
 use App\Http\Action;
 use App\Http\Action\CabinetAction;
 use App\Http\Middleware\BasicAuthMiddleware;
+use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\ActionResolver;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
@@ -33,10 +34,13 @@ $routes->get('about', '/about', Action\AboutAction::class);
 
 $routes->get('cabinet', '/cabinet', function(ServerRequestInterface $request) use ($params){
     $auth = new BasicAuthMiddleware($params['users']);
+    $profiler = new ProfilerMiddleware();
     $cabinet = new CabinetAction();
 
-    return $auth($request, function(ServerRequestInterface $request) use ($cabinet) {
-       return $cabinet($request);
+    return $profiler($request, function(ServerRequestInterface $request) use ($auth, $cabinet) {
+        return $auth($request, function(ServerRequestInterface $request) use ($cabinet) {
+            return $cabinet($request);
+        });
     });
 });
 
