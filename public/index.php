@@ -35,7 +35,6 @@ $routes->get('about', '/about', Action\AboutAction::class);
  */
 
 $routes->get('cabinet', '/cabinet', [
-    ProfilerMiddleware::class,
     new BasicAuthMiddleware($params['users']),
     CabinetAction::class,
 ]);
@@ -46,6 +45,9 @@ $routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens([
 
 $router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в свой адаптер
 $resolver = new MiddlewareResolver();
+$pipeline = new Pipeline(); //создаем объект Pipeline
+
+$pipeline->pipe($resolver->resolve(ProfilerMiddleware::class)); //middleware будет выполняться всегдапше
 
 ### Running
 
@@ -57,7 +59,7 @@ try {
     }
 
     $handlers = $result->getHandler(); //получаем обработчик из роутера (указываем при формировании роута)
-    $pipeline = new Pipeline(); //создаем объект Pipeline
+
 
     foreach (is_array($handlers) ? $handlers : [$handlers] as $handler) { //проверяем является ли элемент массивом или строкой
         $pipeline->pipe($resolver->resolve($handler)); //заносим все элементы массива из обработчика в трубопровод
@@ -65,10 +67,7 @@ try {
 
     $response = $pipeline($request, new Middleware\NotFoundHandler()); //запускает трубопровод со всеми middleware
 
-} catch (RequestNotMatchedException $e) {
-    $handler = new Middleware\NotFoundHandler();
-    $response = $handler($request);
-}
+} catch (RequestNotMatchedException $e) {}
 
 ### Postprocessing
 
