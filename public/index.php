@@ -45,9 +45,9 @@ $routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens([
 
 $router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в свой адаптер
 $resolver = new MiddlewareResolver();
-$pipeline = new Pipeline(); //создаем объект Pipeline
+$app = new \Framework\Http\Application($resolver, new Middleware\NotFoundHandler()); //создаем объект Pipeline
 
-$pipeline->pipe($resolver->resolve(ProfilerMiddleware::class)); //middleware будет выполняться всегдапше
+$app->pipe(ProfilerMiddleware::class); //middleware будет выполняться всегдапше
 
 ### Running
 
@@ -58,12 +58,12 @@ try {
         $request = $request->withAttribute($attribute, $value);
     }
 
-    $handler = $result->getHandler(); //получаем обработчик из роутера (указываем при формировании роута)
-    $pipeline->pipe($resolver->resolve($handler));
+    //получаем обработчик из роутера (указываем при формировании роута) и кладем его в pipe
+    $app->pipe($result->getHandler());
 
 } catch (RequestNotMatchedException $e) {}
 
-$response = $pipeline($request, new Middleware\NotFoundHandler()); //запускает трубопровод со всеми middleware
+$response = $app->run($request); //запускает трубопровод со всеми middleware
 ### Postprocessing
 
 $response = $response->withHeader('X-Developer', 'Julia');
