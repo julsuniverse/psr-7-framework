@@ -5,7 +5,7 @@ use App\Http\Action\CabinetAction;
 use App\Http\Middleware;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
-use Framework\Http\MiddlewareResolver;
+use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Exception\RequestNotMatchedException;
@@ -59,19 +59,10 @@ try {
     }
 
     $handler = $result->getHandler(); //получаем обработчик из роутера (указываем при формировании роута)
-
-    if(is_array($handler)) {
-        $middleware = new Pipeline();
-        foreach($handler as $item)
-            $middleware->pipe($resolver->resolve($item));
-    }
-    else {
-        $middleware = $resolver->resolve($handler);
-    }
-
-    $pipeline->pipe($middleware);
+    $pipeline->pipe($resolver->resolve($handler));
 
 } catch (RequestNotMatchedException $e) {}
+
 $response = $pipeline($request, new Middleware\NotFoundHandler()); //запускает трубопровод со всеми middleware
 ### Postprocessing
 
