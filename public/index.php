@@ -47,6 +47,7 @@ $router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в �
 $resolver = new MiddlewareResolver();
 $app = new \Framework\Http\Application($resolver, new Middleware\NotFoundHandler()); //создаем объект Pipeline
 
+$app->pipe(Middleware\CredentialsMiddleware::class);
 $app->pipe(ProfilerMiddleware::class); //middleware будет выполняться всегдапше
 
 ### Running
@@ -64,9 +65,6 @@ try {
 } catch (RequestNotMatchedException $e) {}
 
 $response = $app->run($request); //запускает трубопровод со всеми middleware
-### Postprocessing
-
-$response = $response->withHeader('X-Developer', 'Julia');
 
 ### Sending
 //отправляем обратно в бразуер результат
