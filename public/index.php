@@ -58,17 +58,21 @@ try {
         $request = $request->withAttribute($attribute, $value);
     }
 
-    $handlers = $result->getHandler(); //получаем обработчик из роутера (указываем при формировании роута)
+    $handler = $result->getHandler(); //получаем обработчик из роутера (указываем при формировании роута)
 
-
-    foreach (is_array($handlers) ? $handlers : [$handlers] as $handler) { //проверяем является ли элемент массивом или строкой
-        $pipeline->pipe($resolver->resolve($handler)); //заносим все элементы массива из обработчика в трубопровод
+    if(is_array($handler)) {
+        $middleware = new Pipeline();
+        foreach($handler as $item)
+            $middleware->pipe($resolver->resolve($item));
+    }
+    else {
+        $middleware = $resolver->resolve($handler);
     }
 
-    $response = $pipeline($request, new Middleware\NotFoundHandler()); //запускает трубопровод со всеми middleware
+    $pipeline->pipe($middleware);
 
 } catch (RequestNotMatchedException $e) {}
-
+$response = $pipeline($request, new Middleware\NotFoundHandler()); //запускает трубопровод со всеми middleware
 ### Postprocessing
 
 $response = $response->withHeader('X-Developer', 'Julia');
