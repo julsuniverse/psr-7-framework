@@ -21,6 +21,7 @@ require 'vendor/autoload.php';
 
 $params = [
     'users' => ['admin' => 'password'],
+    'debug' => true,
 ];
 
 $aura = new Aura\Router\RouterContainer();
@@ -47,6 +48,7 @@ $router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в �
 $resolver = new MiddlewareResolver();
 $app = new \Framework\Http\Application($resolver, new Middleware\NotFoundHandler()); //создаем объект Pipeline
 
+$app->pipe(new Middleware\ErrorHandlerMiddleware($params['debug']));
 $app->pipe(Middleware\CredentialsMiddleware::class);
 $app->pipe(ProfilerMiddleware::class); //middleware будет выполняться всегдапше
 
