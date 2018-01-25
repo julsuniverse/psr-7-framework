@@ -5,6 +5,7 @@ use App\Http\Action\CabinetAction;
 use App\Http\Middleware;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
+use Framework\Http\Middleware\RouteMiddleware;
 use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\AuraRouterAdapter;
@@ -51,21 +52,11 @@ $app = new \Framework\Http\Application($resolver, new Middleware\NotFoundHandler
 $app->pipe(new Middleware\ErrorHandlerMiddleware($params['debug']));
 $app->pipe(Middleware\CredentialsMiddleware::class);
 $app->pipe(ProfilerMiddleware::class); //middleware будет выполняться всегдапше
+$app->pipe(new RouteMiddleware($router, $resolver));
 
 ### Running
 
 $request = ServerRequestFactory::fromGlobals(); //содержит все информацию о запросе
-try {
-    $result = $router->match($request); //проверяем соответвие запроса с нашими роутерами
-    foreach($result->getAttributes() as $attribute => $value) { //достаем из запроса атрибуты (в запросе кроме аттрибутов еще куча другой информации!)
-        $request = $request->withAttribute($attribute, $value);
-    }
-
-    //получаем обработчик из роутера (указываем при формировании роута) и кладем его в pipe
-    $app->pipe($result->getHandler());
-
-} catch (RequestNotMatchedException $e) {}
-
 $response = $app->run($request); //запускает трубопровод со всеми middleware
 
 ### Sending
