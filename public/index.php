@@ -5,6 +5,7 @@ use App\Http\Action\CabinetAction;
 use App\Http\Middleware;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\ProfilerMiddleware;
+use Framework\Http\Middleware\DispatchMiddleware;
 use Framework\Http\Middleware\RouteMiddleware;
 use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
@@ -53,6 +54,7 @@ $app->pipe(new Middleware\ErrorHandlerMiddleware($params['debug']));
 $app->pipe(Middleware\CredentialsMiddleware::class);
 $app->pipe(ProfilerMiddleware::class); //middleware будет выполняться всегдапше
 $app->pipe(new RouteMiddleware($router, $resolver));
+$app->pipe(new DispatchMiddleware($resolver));
 
 ### Running
 
