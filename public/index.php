@@ -59,7 +59,7 @@ $app->pipe(new DispatchMiddleware($resolver));
 ### Running
 
 $request = ServerRequestFactory::fromGlobals(); //содержит все информацию о запросе
-$response = $app->run($request); //запускает трубопровод со всеми middleware
+$response = $app->run($request, new \Zend\Diactoros\Response()); //запускает трубопровод со всеми middleware
 
 ### Sending
 //отправляем обратно в бразуер результат

@@ -5,6 +5,7 @@ namespace Framework\Http;
 
 use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Pipeline\Pipeline;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Application extends Pipeline
@@ -24,8 +25,8 @@ class Application extends Pipeline
         parent::pipe($this->resolver->resolve($middleware));
     }
 
-    public function run(ServerRequestInterface $request)
+    public function run(ServerRequestInterface $request, ResponseInterface $response)
     {
-        return $this($request, $this->default);
+        return $this($request, $response, $this->default);
     }
 }

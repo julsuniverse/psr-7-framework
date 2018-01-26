@@ -4,7 +4,9 @@ namespace Tests\Framework\Http\Pipeline;
 
 use Framework\Http\Pipeline\Pipeline;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Diactoros\ServerRequest;
 
@@ -17,7 +19,7 @@ class PipelineTest extends TestCase
         $pipeline->pipe(new Middleware1);
         $pipeline->pipe(new Middleware2);
 
-        $response = $pipeline(new ServerRequest(), new Last());
+        $response = $pipeline(new ServerRequest(), new Response(), new Last());
 
         $this->assertJsonStringEqualsJsonString(
             json_encode([
@@ -31,7 +33,7 @@ class PipelineTest extends TestCase
 
 class Middleware1
 {
-    public function __invoke(ServerRequestInterface $request, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         return $next($request->withAttribute('middleware1', 1));
     }
@@ -39,7 +41,7 @@ class Middleware1
 
 class Middleware2
 {
-    public function __invoke(ServerRequestInterface $request, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         return $next($request->withAttribute('middleware2', 2));
     }

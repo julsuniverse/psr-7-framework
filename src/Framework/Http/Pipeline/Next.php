@@ -15,15 +15,15 @@ class Next
         $this->queue = $queue;
     }
 
-    public function __invoke(ServerRequestInterface $request): ResponseInterface
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         if($this->queue->isEmpty())
-            return ($this->default)($request);
+            return ($this->default)($request, $response);
 
         $current = $this->queue->dequeue();
 
-        return $current($request, function(ServerRequestInterface $request){
-            return $this($request);
+        return $current($request, $response, function(ServerRequestInterface $request) use($response) {
+            return $this($request, $response);
         });
     }
 }
