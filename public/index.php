@@ -12,12 +12,17 @@ use Zend\Diactoros\ServerRequestFactory;
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';
 
-### Initialization
+### Configuration
 
-$params = [
-    'debug' => true,
-    'users' => ['admin' => 'password'],
-];
+$container = new \Framework\Container\Container();
+
+$container->set('debug', true);
+$container->set('users', ['admin' => 'password']);
+$container->set('db', new \PDO('mysql:localhost;dbname=db', 'username', 'password'));
+
+$db = $container->get('db');
+
+### Initialization
 
 $aura = new Aura\Router\RouterContainer();
 
@@ -37,7 +42,7 @@ $app->pipe(Middleware\CredentialsMiddleware::class);
 $app->pipe(Middleware\ProfilerMiddleware::class);
 $app->pipe(new Framework\Http\Middleware\RouteMiddleware($router));
 $app->pipe('cabinet', new Middleware\BasicAuthMiddleware($params['users']));
-$app->pipe(new Framework\Http\Middleware\DispatchMiddleware($resolver));
+$app->pipe(new Framework\Http\Middleware\DispatchMiddleware($resolver)); //запускает наши экшены
 
 ### Running
 
