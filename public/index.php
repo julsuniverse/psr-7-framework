@@ -16,11 +16,10 @@ require 'vendor/autoload.php';
 
 $container = new \Framework\Container\Container();
 
-$container->set('debug', true);
-$container->set('users', ['admin' => 'password']);
-$container->set('db', new \PDO('mysql:localhost;dbname=db', 'username', 'password'));
-
-$db = $container->get('db');
+$container->set('config', [
+    'debug' => true,
+    'users' => ['admin' => 'password'],
+]);
 
 ### Initialization
 
@@ -37,11 +36,11 @@ $router = new AuraRouterAdapter($aura);  //Оборачиваем AuraRouter в 
 $resolver = new MiddlewareResolver();
 
 $app = new Application($resolver, new Middleware\NotFoundHandler(), new Response());
-$app->pipe(new Middleware\ErrorHandlerMiddleware($params['debug']));
+$app->pipe(new Middleware\ErrorHandlerMiddleware($container->get('config')['debug']));
 $app->pipe(Middleware\CredentialsMiddleware::class);
 $app->pipe(Middleware\ProfilerMiddleware::class);
 $app->pipe(new Framework\Http\Middleware\RouteMiddleware($router));
-$app->pipe('cabinet', new Middleware\BasicAuthMiddleware($params['users']));
+$app->pipe('cabinet', new Middleware\BasicAuthMiddleware($container->get('config')['users']));
 $app->pipe(new Framework\Http\Middleware\DispatchMiddleware($resolver)); //запускает наши экшены
 
 ### Running
