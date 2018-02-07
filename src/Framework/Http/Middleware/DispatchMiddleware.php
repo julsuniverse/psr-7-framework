@@ -2,7 +2,6 @@
 
 namespace Framework\Http\Middleware;
 
-
 use Framework\Http\Pipeline\MiddlewareResolver;
 use Framework\Http\Router\Result;
 use Psr\Http\Message\ResponseInterface;
@@ -23,7 +22,7 @@ class DispatchMiddleware
         if(!$result = $request->getAttribute(Result::class)) {
             return $next($result);
         }
-        $middleware = $this->resolver->resolve($result->getHandler());
+        $middleware = $this->resolver->resolve($result->getHandler(), $response);
         return $middleware($request, $response, $next);
     }
 }
