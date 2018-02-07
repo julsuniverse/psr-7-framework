@@ -9,7 +9,8 @@
     "psr/http-server-handler": "^1.0",
     "psr/http-server-middleware": "^1.0",
     "roave/security-advisories": "dev-master",
-    "zendframework/zend-diactoros": "^1.7"
+    "zendframework/zend-diactoros": "^1.7",
+    "zendframework/zend-stratigility": "3.0.0alpha2"
   },
   "autoload": {
     "psr-4": {

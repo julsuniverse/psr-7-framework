@@ -48,18 +48,29 @@ $routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens([
 
 $router = new AuraRouterAdapter($aura); //Оборачиваем AuraRouter в свой адаптер
 $resolver = new MiddlewareResolver();
-$app = new \Framework\Http\Application($resolver, new Middleware\NotFoundHandler()); //создаем объект Pipeline
+//$app = new \Framework\Http\Application($resolver, new Middleware\NotFoundHandler()); //создаем объект Pipeline
+$app = new \Zend\Stratigility\MiddlewarePipe();
 
-$app->pipe(new Middleware\ErrorHandlerMiddleware($params['debug']));
-$app->pipe(Middleware\CredentialsMiddleware::class);
-$app->pipe(ProfilerMiddleware::class); //middleware будет выполняться всегдапше
-$app->pipe(new RouteMiddleware($router, $resolver));
-$app->pipe(new DispatchMiddleware($resolver));
+/*$app->pipe(
+    new \Zend\Stratigility\Middleware\CallableMiddlewareDecorator(
+        $resolver->resolve(
+            new Middleware\ErrorHandlerMiddleware($params['debug'])
+        )
+    )
+);*/
 
+//$app->pipe(Middleware\CredentialsMiddleware::class);
+//$app->pipe(ProfilerMiddleware::class);
+//$app->pipe(new \Zend\Stratigility\Middleware\CallableMiddlewareDecorator(new RouteMiddleware($router, $resolver)));
+
+//$app->pipe(new \Zend\Stratigility\Middleware\CallableMiddlewareDecorator(new DispatchMiddleware($resolver)));
+//print_r($app);
 ### Running
 
 $request = ServerRequestFactory::fromGlobals(); //содержит все информацию о запросе
-$response = $app->run($request, new \Zend\Diactoros\Response()); //запускает трубопровод со всеми middleware
+//$response = $app->run($request, new \Zend\Diactoros\Response()); //запускает трубопровод со всеми middleware
+
+$response = $app->process($request, new Middleware\NotFoundHandler);
 
 ### Sending
 //отправляем обратно в бразуер результат
