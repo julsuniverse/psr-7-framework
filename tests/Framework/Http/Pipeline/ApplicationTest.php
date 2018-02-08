@@ -2,6 +2,7 @@
 
 namespace Tests\Framework\Http;
 
+use Aura\Router\Route;
 use Framework\Http\Application;
 use Framework\Http\Pipeline\MiddlewareResolver;
 use PHPUnit\Framework\TestCase;

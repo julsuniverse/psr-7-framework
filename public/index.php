@@ -28,6 +28,7 @@ $container->set('config', [
 $container->set(Application::class, function (Container $container) {
     return new Application(
         $container->get(MiddlewareResolver::class),
+        $container->get(\Aura\Router\Route::class),
         new Middleware\NotFoundHandler(),
         new Response()
     );
@@ -46,16 +47,7 @@ $container->set(MiddlewareResolver::class, function () {
 });
 
 $container->set(Router::class, function () {
-    $aura = new Aura\Router\RouterContainer();
-    $routes = $aura->getMap();
-
-    $routes->get('home', '/', Action\HelloAction::class);
-    $routes->get('about', '/about', Action\AboutAction::class);
-    $routes->get('cabinet', '/cabinet', Action\CabinetAction::class);
-    $routes->get('blog', '/blog', Action\Blog\IndexAction::class);
-    $routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class)->tokens(['id' => '\d+']);
-
-    return new AuraRouterAdapter($aura);  //Оборачиваем AuraRouter в свой адаптер
+    return new AuraRouterAdapter(new Aura\Router\RouterContainer());  //Оборачиваем AuraRouter в свой адаптер
 });
 
 $container->set(RouteMiddleware::class, function (Container $container) {
@@ -77,6 +69,13 @@ $app->pipe(Middleware\ProfilerMiddleware::class);
 $app->pipe($container->get(RouteMiddleware::class));
 $app->pipe('cabinet',$container->get(Middleware\BasicAuthMiddleware::class));
 $app->pipe($container->get(DispatchMiddleware::class)); //запускает наши экшены
+
+
+$app->get('home', '/', Action\HelloAction::class);
+$app->get('about', '/about', Action\AboutAction::class);
+$app->get('cabinet', '/cabinet', Action\CabinetAction::class);
+$app->get('blog', '/blog', Action\Blog\IndexAction::class);
+$app->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['tokens' => ['id' => '\d+']]);
 
 ### Running
 
