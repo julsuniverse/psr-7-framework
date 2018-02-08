@@ -4,11 +4,19 @@ namespace Framework\Container;
 
 class Container
 {
+    /** @var array
+     * Хранит список сервисов
+     */
     private $definitions = [];
-    private $results = [];
+
+    /** @var array
+     * Кеширует экземпляры сервисов
+     */
+    private $results = []; //сюда кешируем
 
     public function get($id)
     {
+        /** Достаем из кеша */
         if (array_key_exists($id, $this->results)) {
             return $this->results[$id];
         }
@@ -19,6 +27,17 @@ class Container
 
         $definition =  $this->definitions[$id];
 
+        /**
+         * Если $definition объект класса Closure (является анонимной функции), то
+         * мы вызываем на исполнение эту анонимную функцию и результат записываем в массив results.
+         * Если нет, записываем в results содержимое вызванного сервиса.
+         *
+         * Анонимная функция используется для того, чтобы
+         * не создавать экземпляр объекта при записи в контейнер,
+         * а создавать только при вызове нужного сервиса.
+         *
+         * Записываем в кеш (в $results), чтобы не создавать повторно экземпляр.
+         */
         if($definition instanceof \Closure) {
             $this->results[$id] = $definition($this);
         } else {
@@ -31,6 +50,7 @@ class Container
 
     public function set($id, $value): void
     {
+        /** Удаляем из кеша, если такой элемент уже есть */
         if (array_key_exists($id, $this->results)) {
             unset($this->results[$id]);
         }
