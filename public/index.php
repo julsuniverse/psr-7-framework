@@ -1,13 +1,13 @@
 <?php
 
-use Framework\Container\Container;
+use Psr\Container\ContainerInterface;
 use Framework\Http\Application;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
 
 /** @var Application $app */
-/** @var Container $container */
+/** @var ContainerInterface $container */
 
 chdir(dirname(__DIR__));
 require 'vendor/autoload.php';

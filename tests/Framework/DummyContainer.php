@@ -2,10 +2,10 @@
 
 namespace Tests\Framework;
 
-use Framework\Container\Container;
+use Psr\Container\ContainerInterface;
 use Framework\Container\ServiceNotFoundException;
 
-class DummyContainer extends Container
+class DummyContainer implements ContainerInterface
 {
     public function get($id)
     {
