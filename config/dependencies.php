@@ -10,28 +10,30 @@ use Framework\Http\Router\AuraRouterAdapter;
 use Framework\Http\Router\Router;
 use Zend\Diactoros\Response;
 
-/** @var Container $container */
+return [
+    Application::class => function (Container $container) {
+        return new Application(
+            $container->get(MiddlewareResolver::class),
+            $container->get(Router::class),
+            new  Middleware\NotFoundHandler(),
+            new Response()
+        );
+    },
 
-$container->set(Application::class, function (Container $container) {
-    return new Application(
-        $container->get(MiddlewareResolver::class),
-        $container->get(Router::class),
-        new  Middleware\NotFoundHandler(),
-        new Response()
-    );
-});
+    Router::class => function () {
+        return new AuraRouterAdapter(new Aura\Router\RouterContainer());  //Оборачиваем AuraRouter в свой адаптер
+    },
 
-$container->set(Router::class, function () {
-    return new AuraRouterAdapter(new Aura\Router\RouterContainer());  //Оборачиваем AuraRouter в свой адаптер
-});
-$container->set(MiddlewareResolver::class, function (Container $container) {
-    return new MiddlewareResolver($container);
-});
+    MiddlewareResolver::class => function (Container $container) {
+        return new MiddlewareResolver($container);
+    },
 
-$container->set(BasicAuthMiddleware::class, function (Container $container) {
-    return new BasicAuthMiddleware($container->get('config')['users']);
-});
+    BasicAuthMiddleware::class => function (Container $container) {
+        return new BasicAuthMiddleware($container->get('config')['users']);
+    },
 
-$container->set(ErrorHandlerMiddleware::class, function (Container $container) {
-    return new ErrorHandlerMiddleware($container->get('config')['debug']);
-});
+    ErrorHandlerMiddleware::class => function (Container $container) {
+        return new ErrorHandlerMiddleware($container->get('config')['debug']);
+    },
+
+];

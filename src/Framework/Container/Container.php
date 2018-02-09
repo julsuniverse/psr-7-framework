@@ -7,12 +7,17 @@ class Container
     /** @var array
      * Хранит список сервисов
      */
-    private $definitions = [];
+    private $definitions;
 
     /** @var array
      * Кеширует экземпляры сервисов
      */
     private $results = [];
+
+    public function __construct(array $definitions = [])
+    {
+        $this->definitions = $definitions;
+    }
 
     public function get($id)
     {
