@@ -12,7 +12,7 @@ class Container
     /** @var array
      * Кеширует экземпляры сервисов
      */
-    private $results = []; //сюда кешируем
+    private $results = [];
 
     public function get($id)
     {
@@ -31,7 +31,46 @@ class Container
          */
         if (!array_key_exists($id, $this->definitions)) {
             if(class_exists($id)) {
-                return $this->results[$id] = new $id();
+
+                /** Рефлексией создаем класс */
+                $reflection = new \ReflectionClass($id);
+
+                $arguments = [];
+                /**
+                 * Из созданного рефлексией класса берем конструктор,
+                 * у конструктора перебираем параметры,
+                 * у параметра достаем класс,
+                 * берем его название и записываем в массив $arguments
+                 */
+                if(($constructor = $reflection->getConstructor()) !== null) {
+                    foreach ($constructor->getParameters() as $param) {
+                        /**
+                         * Если параметр - класс, достаем его,
+                         * берем его название и записываем в массив $arguments
+                         */
+                        if ($paramClass = $param->getClass()) {
+                            $arguments[] = $this->get($paramClass->getName());
+                        } elseif ($param->isArray()) {
+                            /** Если параметр - массив,
+                             *  то записывает в $arguments пустой массив
+                             */
+                            $arguments = [];
+                        } else {
+                            /** Если у аргумента есть значение по умолчанию,
+                             * то оно записывается в $arguments
+                             */
+                            if(!$param->isDefaultValueAvailable()) {
+                                throw new ServiceNotFoundException('Unable to resolve "' . $param->getName() . '"" in service "' . $id . '"');
+                            }
+                            $arguments[] = $param->getDefaultValue();
+                        }
+                    }
+                }
+
+                /** Cоздаем рефлексией классы из параметров конструктора */
+                $this->results[$id] = $reflection->newInstanceArgs($arguments);
+
+                return $this->results[$id];
             }
             throw new ServiceNotFoundException('Unknown service "' . $id . '""');
         }
