@@ -21,8 +21,19 @@ class Container
             return $this->results[$id];
         }
 
+        /**
+         * MidlewareResolver пытается достать класс (сервис) из контейнера.
+         * Если такого сервиса в контейнере нету, контейнер просто создаст
+         * класс через new и вернет его.
+         * Если у класса есть какой-то конструктор, то PHP вылетит с ошибкой,
+         * что не может создать класс.
+         * Если такого класса нету, выкинет исключение.
+         */
         if (!array_key_exists($id, $this->definitions)) {
-            throw new ServiceNotFoundException('Undefined parameter "' . $id . '""');
+            if(class_exists($id)) {
+                return $this->results[$id] = new $id();
+            }
+            throw new ServiceNotFoundException('Unknown service "' . $id . '""');
         }
 
         $definition =  $this->definitions[$id];
