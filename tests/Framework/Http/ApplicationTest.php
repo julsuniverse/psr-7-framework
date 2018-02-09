@@ -5,6 +5,7 @@ namespace Tests\Framework\Http;
 use Aura\Router\Route;
 use Framework\Http\Application;
 use Framework\Http\Pipeline\MiddlewareResolver;
+use Framework\Http\Router\Router;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -16,7 +17,9 @@ class ApplicationTest extends TestCase
 {
     public function testPipe()
     {
-        $app = new Application(new MiddlewareResolver(), new DefaultHandler(), new Response());
+        $router = $this->createMock(Router::class);
+
+        $app = new Application(new MiddlewareResolver(), $router, new DefaultHandler(), new Response());
         $app->pipe(new Middleware1());
         $app->pipe(new Middleware2());
         $response = $app->run(new ServerRequest(), new Response());
