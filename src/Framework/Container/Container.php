@@ -2,7 +2,7 @@
 
 namespace Framework\Container;
 
-class Container
+class Container implements ContainerInterface
 {
     /** @var array
      * Хранит список сервисов
@@ -116,7 +116,7 @@ class Container
      * Проверяет, что для такого id в нашем контейнере есть определение
      * ИЛИ существует такой класс
      */
-    public function has($id)
+    public function has($id): bool
     {
         return array_key_exists($id, $this->definitions) || class_exists($id);
     }
