@@ -67,4 +67,13 @@ class Container
         }
         $this->definitions[$id] = $value;
     }
+
+    /**
+     * Проверяет, что для такого id в нашем контейнере есть определение
+     * ИЛИ существует такой класс
+     */
+    public function has($id)
+    {
+        return array_key_exists($id, $this->definitions) || class_exists($id);
+    }
 }

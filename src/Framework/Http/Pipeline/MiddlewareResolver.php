@@ -23,7 +23,7 @@ class MiddlewareResolver
             return $this->createPipe($handler, $responsePrototype);
         }
 
-        if(is_string($handler)) {
+        if(is_string($handler) && $this->container->has($handler)) {
             return function(ServerRequestInterface $request, ResponseInterface $response, callable $next) use ($handler) {
                 $middleware = $this->resolve($this->container->get($handler), $response);
                 return $middleware($request, $response, $next);
