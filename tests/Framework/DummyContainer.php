@@ -3,7 +3,7 @@
 namespace Tests\Framework;
 
 use Psr\Container\ContainerInterface;
-use Framework\Container\ServiceNotFoundException;
+use Zend\ServiceManager\Exception\ServiceNotFoundException;
 
 class DummyContainer implements ContainerInterface
 {
