@@ -1,6 +1,5 @@
 <?php
 
-use Framework\Container\Container;
 use Zend\ServiceManager\ServiceManager;
 
 $config = require __DIR__ . './config.php';

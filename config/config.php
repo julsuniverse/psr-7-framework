@@ -1,8 +1,9 @@
 <?php
-$configs = array_map(
-    function ($file) {
-        return require $file;
-    },
-    glob(__DIR__ . '/autoload/{{,*.}global,{,*.}local}.php', GLOB_BRACE)
-);
-return array_merge_recursive(...$configs);
+use Zend\ConfigAggregator\ConfigAggregator;
+use Zend\ConfigAggregator\PhpFileProvider;
+
+$aggregator = new ConfigAggregator([
+    new PhpFileProvider(__DIR__ . '/autoload/{{,*.}global,{,*.}local}.php'),
+]);
+
+return $aggregator->getMergedConfig();
