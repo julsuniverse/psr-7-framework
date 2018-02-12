@@ -16,14 +16,8 @@ use Zend\Diactoros\Response;
 
 return [
     'dependencies' => [
-        'invokables' => [
-            Middleware\CredentialsMiddleware::class,
-            Middleware\ProfilerMiddleware::class,
-            Action\HelloAction::class,
-            Action\AboutAction::class,
-            Action\CabinetAction::class,
-            Action\Blog\IndexAction::class,
-            Action\Blog\ShowAction::class,
+        'abstract_factories' => [
+            Zend\ServiceManager\AbstractFactory\ReflectionBasedAbstractFactory::class,
         ],
         'factories' => [
             Application::class => function (ContainerInterface $container) {
