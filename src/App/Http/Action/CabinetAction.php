@@ -4,7 +4,6 @@ namespace App\Http\Action;
 
 use App\Http\Middleware\BasicAuthMiddleware;
 use Framework\Template\TemplateRenderer;
-use PHPUnit\Framework\MockObject\RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
