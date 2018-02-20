@@ -2,6 +2,7 @@
 
 namespace App\Http\Action;
 
+use Framework\Template\TemplateRenderer;
 use Zend\Diactoros\Response\HtmlResponse;
 
 class AboutAction
@@ -15,6 +16,6 @@ class AboutAction
 
     public function __invoke()
     {
-        return new HtmlResponse($this->template->render('about'));
+        return new HtmlResponse($this->template->render('app/about'));
     }
 }
