@@ -3,17 +3,26 @@
 namespace App\Http\Action;
 
 use App\Http\Middleware\BasicAuthMiddleware;
+use Framework\Template\TemplateRenderer;
 use PHPUnit\Framework\MockObject\RuntimeException;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
 
 class CabinetAction
 {
+    private $template;
+
+    public function __construct(TemplateRenderer $template)
+    {
+        $this->template = $template;
+    }
 
     public function __invoke(ServerRequestInterface $request)
     {
         $username = $request->getAttribute(BasicAuthMiddleware::ATTRIBUTE);
 
-        return new HtmlResponse("You are logged in as " . $username);
+        return new HtmlResponse($this->template->render('cabinet', [
+            'name' => $username,
+        ]));
     }
 }

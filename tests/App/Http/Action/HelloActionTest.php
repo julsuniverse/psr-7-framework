@@ -9,26 +9,19 @@ use Zend\Diactoros\ServerRequest;
 
 class HelloActionTest extends TestCase
 {
-    public function TestGuest()
+    private $renderer;
+
+    public function setUp(): void
     {
-        $action = new HelloAction(new TemplateRenderer('templates'));
-
-        $request = new ServerRequest();
-        $response = $action($request);
-
-        self::assertEquals(200, $response->getStatusCode());
-        self::assertContains('Hello, Guest!', $response->getBody()->getContents());
+        parent::setUp();
+        $this->renderer = new TemplateRenderer('templates');
     }
 
-    public function testJohn()
+    public function test()
     {
-        $action = new HelloAction(new TemplateRenderer('templates'));
-
-        $request = (new ServerRequest())
-            ->withQueryParams(['name' => 'John']);
-
-        $response = $action($request);
-
-        self::assertContains('Hello, John!', $response->getBody()->getContents());
+        $action = new HelloAction($this->renderer);
+        $response = $action();
+        self::assertEquals(200, $response->getStatusCode());
+        self::assertContains('Hello!', $response->getBody()->getContents());
     }
 }

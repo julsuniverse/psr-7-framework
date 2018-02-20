@@ -12,6 +12,8 @@ return [
         ],
     ],
     'auth' => [
-        'users' => [],
+        'users' => [
+            'admin' => 'password'
+        ],
     ],
 ];
