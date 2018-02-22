@@ -3,7 +3,7 @@
 /*
  * @var \Framework\Template\PhpRenderer $this
  */
-$this->extend = 'layout/default';
+$this->extend('layout/default');
 $this->params['title'] = 'About';
 
 ?>

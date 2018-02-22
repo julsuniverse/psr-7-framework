@@ -5,7 +5,7 @@
  */
 ?>
 <?php
-$this->extend = 'layout/columns';
+$this->extend('layout/columns');
 $this->params['title'] = 'Cabinet';
 ?>
 
