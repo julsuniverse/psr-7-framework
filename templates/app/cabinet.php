@@ -5,9 +5,22 @@
  */
 ?>
 <?php
+/*
+ * @var \Framework\Template\PhpRenderer $this
+ * @var string $name
+ */
 $this->extend('layout/columns');
 $this->params['title'] = 'Cabinet';
 ?>
+
+<?php $this->beginBlock('sidebar');?>
+<div class="panel panel-default">
+    <div class="panel-heading">Cabinet</div>
+    <div class="panel-body">
+        Cabinet navigation
+    </div>
+</div>
+<?php $this->endBlock() ?>
 
 <ul class="breadcrumb">
     <li><a href="/">Home</a></li>
