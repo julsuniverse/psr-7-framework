@@ -4,17 +4,21 @@
 namespace Framework\Template;
 
 
+use Framework\Http\Router\Router;
+
 class PhpRenderer implements TemplateRenderer
 {
     private $path;
     private $extend;
     private $blocks = [];
     private $blockNames;
+    private $route;
 
-    public function __construct($path)
+    public function __construct($path, Router $route)
     {
         $this->path = $path;
         $this->blockNames = new \SplStack();
+        $this->route = $route;
     }
 
     public function render($view, array $params = []): string
@@ -94,5 +98,10 @@ class PhpRenderer implements TemplateRenderer
     public function encode($name)
     {
        return htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE);
+    }
+
+    public function path($name, array $params = []): string
+    {
+        return $this->route->generate($name, $params);
     }
 }

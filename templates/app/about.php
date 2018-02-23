@@ -14,7 +14,7 @@ $this->extend('layout/columns');
 
 <?php $this->beginBlock('breadcrumbs');?>
 <ul class="breadcrumb">
-    <li><a href="/">Home</a></li>
+    <li><a href="<?= $this->path('home');?>">Home</a></li>
     <li class="active">Cabinet</li>
 </ul>
 <?php $this->endBlock() ?>
