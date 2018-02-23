@@ -460,3 +460,7 @@
 192.168.83.1 - admin [23/Feb/2018:13:48:06 +0000] "GET /favicon.ico HTTP/1.1" 500 22 "http://framework.loc/about" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
 192.168.83.1 - admin [23/Feb/2018:13:48:08 +0000] "GET /cabinet HTTP/1.1" 200 985 "http://framework.loc/about" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
 192.168.83.1 - admin [23/Feb/2018:13:48:08 +0000] "GET /favicon.ico HTTP/1.1" 500 22 "http://framework.loc/cabinet" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
+192.168.83.1 - admin [23/Feb/2018:13:58:16 +0000] "GET /cabinet HTTP/1.1" 200 985 "http://framework.loc/cabinet" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
+192.168.83.1 - admin [23/Feb/2018:13:58:17 +0000] "GET /favicon.ico HTTP/1.1" 500 22 "http://framework.loc/cabinet" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
+192.168.83.1 - admin [23/Feb/2018:13:58:18 +0000] "GET /cabinet HTTP/1.1" 200 985 "http://framework.loc/cabinet" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
+192.168.83.1 - admin [23/Feb/2018:13:58:18 +0000] "GET /favicon.ico HTTP/1.1" 500 22 "http://framework.loc/cabinet" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.119 Safari/537.36"
