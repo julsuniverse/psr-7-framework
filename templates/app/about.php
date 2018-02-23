@@ -3,7 +3,7 @@
 /*
  * @var \Framework\Template\PhpRenderer $this
  */
-$this->extend('layout/default');
+$this->extend('layout/columns');
 ?>
 
 <?php $this->beginBlock('title');?>About<?php $this->endBlock() ?>
@@ -19,6 +19,6 @@ $this->extend('layout/default');
 </ul>
 <?php $this->endBlock() ?>
 
-<?php $this->beginBlock('content');?>
+<?php $this->beginBlock('main');?>
     <h1>About the site</h1>
 <?php $this->endBlock() ?>
