@@ -4,8 +4,8 @@
  * @var string $name
  */
 $this->extend('layout/columns');
-$this->params['title'] = 'Cabinet';
 ?>
+<?php $this->beginBlock('title');?>Cabinet<?php $this->endBlock() ?>
 <?php $this->beginBlock('meta');?>
     <meta name="description" content="Cabinet Page description" />
 <?php $this->endBlock() ?>

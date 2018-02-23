@@ -6,6 +6,7 @@
 $this->extend('layout/default');
 $this->params['title'] = 'Hello'; //$this - наш renderer
 ?>
+<?php $this->beginBlock('title');?>Hello<?php $this->endBlock() ?>
 <?php $this->beginBlock('meta');?>
     <meta name="description" content="Hello Page description" />
 <?php $this->endBlock() ?>

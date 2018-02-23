@@ -7,7 +7,6 @@ namespace Framework\Template;
 class PhpRenderer implements TemplateRenderer
 {
     private $path;
-    private $params = [];
     private $extend;
     private $blocks = [];
     private $blockNames;
