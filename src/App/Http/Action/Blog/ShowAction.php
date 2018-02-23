@@ -2,18 +2,29 @@
 
 namespace App\Http\Action\Blog;
 
+use App\ReadModel\PostReadRepository;
+use Framework\Template\TemplateRenderer;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\Response\JsonResponse;
 
 class ShowAction
 {
-    public function __invoke(ServerRequestInterface $request)
+    private $posts;
+    private $template;
+
+    public function __construct(PostReadRepository $posts, TemplateRenderer $template)
     {
-        $id = $request->getAttribute('id');
-        if ($id > 2) {
-            return new HtmlResponse('Undefined page', 404);
+        $this->posts = $posts;
+        $this->template = $template;
+    }
+
+    public function __invoke(ServerRequestInterface $request, callable $next)
+    {
+        if(!$post = $this->posts->find($request->getAttribute('id'))) {
+            return $next($request);
         }
-        return new JsonResponse(['id' => $id, 'title' => 'Post #' . $id]);
+        return new HtmlResponse($this->template->render('app/blog/show', [
+            'post' => $post
+        ]));
     }
 }
