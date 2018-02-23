@@ -19,8 +19,8 @@
                         Default navigation
                     </div>
                 </div>
+             <?php $this->endBlock() ?>
             <?php endif; ?>
-            <?php $this->endBlock() ?>
             <?= $this->renderBlock('sidebar'); ?>
         </div>
     </div>
