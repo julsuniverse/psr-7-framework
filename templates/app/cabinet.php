@@ -6,6 +6,10 @@
 $this->extend('layout/columns');
 $this->params['title'] = 'Cabinet';
 ?>
+<?php $this->beginBlock('meta');?>
+    <meta name="description" content="Cabinet Page description" />
+<?php $this->endBlock() ?>
+
 <?php $this->beginBlock('breadcrumbs');?>
 <ul class="breadcrumb">
     <li><a href="/">Home</a></li>
