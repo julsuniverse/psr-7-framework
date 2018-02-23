@@ -51,7 +51,7 @@ class PhpRenderer implements TemplateRenderer
     {
         $content = ob_get_clean();
         $name = $this->blockNames->pop();
-        if(array_key_exists($name, $this->blocks)) {
+        if($this->hasBlock($name)) {
             return;
         }
         return $this->blocks[$name] = $content;
@@ -60,5 +60,20 @@ class PhpRenderer implements TemplateRenderer
     public function renderBlock($name)
     {
         return $this->blocks[$name] ?? '';
+    }
+
+    public function ensureBlock($name)
+    {
+        if($this->hasBlock($name)) {
+            return false;
+        }
+
+        $this->beginBlock($name);
+        return true;
+    }
+
+    public function hasBlock($name)
+    {
+        return array_key_exists($name, $this->blocks);
     }
 }

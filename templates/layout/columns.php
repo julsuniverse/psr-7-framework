@@ -12,13 +12,14 @@
             <?= $this->renderBlock('main'); ?>
         </div>
         <div class="col-md-3 .col-lg-pull-3 col-sm-12">
-            <?php $this->beginBlock('sidebar');?>
+            <?php if($this->ensureBlock('sidebar')): ?>
                 <div class="panel panel-default">
                     <div class="panel-heading">Navigation</div>
                     <div class="panel-body">
                         Default navigation
                     </div>
                 </div>
+            <?php endif; ?>
             <?php $this->endBlock() ?>
             <?= $this->renderBlock('sidebar'); ?>
         </div>
