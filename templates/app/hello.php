@@ -11,9 +11,11 @@ $this->params['title'] = 'Hello'; //$this - наш renderer
     <meta name="description" content="Hello Page description" />
 <?php $this->endBlock() ?>
 
-<div class="jumbotron">
-    <h1>Hello!</h1>
-    <p>
-        Congratulations! You have successfully created your application.
-    </p>
-</div>
+<?php $this->beginBlock('content');?>
+    <div class="jumbotron">
+        <h1>Hello!</h1>
+        <p>
+            Congratulations! You have successfully created your application.
+        </p>
+    </div>
+<?php $this->endBlock() ?>

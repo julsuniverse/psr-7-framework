@@ -41,7 +41,7 @@
 <div class="app-content">
     <main class="container">
         <?= $this->renderBlock('breadcrumbs'); ?>
-        <?= $content;?>
+        <?= $this->renderBlock('content');?>
 
     </main>
 </div>
